@@ -1,0 +1,77 @@
+﻿@using FGM.DataLayer
+@inject ISurveyService Service
+@inject IDialogService DialogService
+
+
+<MudDataGrid T="Survey" Items="@Surveys" Filterable="true"  ReadOnly="@false" FilterMode="@DataGridFilterMode.Simple" Bordered="false"
+             StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
+             EditMode="DataGridEditMode.Form" EditTrigger="DataGridEditTrigger.Manual"
+             Class="mb-2">
+    <Columns>
+        <PropertyColumn Property="x => x.CountryName" Title="Country"/>
+        <PropertyColumn Property="x => x.CountryCode" Title="Code"/>
+        <PropertyColumn Property="x => x.YearOfSurvey" Title="Survey Year"/>
+        <PropertyColumn Property="x => x.Name" Title="Survey Name"/>
+        <PropertyColumn Property="x => x.FifteenToNineteen" Title="15-19" Filterable="false"/>
+        <PropertyColumn Property="x => x.TwentyToTwentyfour" Title="20-24" Filterable="false"/>
+        <PropertyColumn Property="x => x.TwentyfiveToTwentynine" Title="25-29" Filterable="false"/>
+        <PropertyColumn Property="x => x.ThirtyToThirtyfour" Title="30-34" Filterable="false"/>
+        <PropertyColumn Property="x => x.ThirtyfiveToThitrynine" Title="35-39" Filterable="false"/>
+        <PropertyColumn Property="x => x.FourtyToFourtyfour" Title="40-44" Filterable="false"/>
+        <PropertyColumn Property="x => x.FourtyfiveToFourtynine" Title="45-49" Filterable="false"/>
+        <TemplateColumn Filterable="false">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Filterable="false">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary" OnClick="@(() => DeleteSurvey(@context.Item))">Delete</MudButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Survey"/>
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    [Parameter] public List<Survey> Surveys { get; set; } = null;
+    private List<string> _events = new();
+    
+    private async Task DeleteSurvey(Survey contextItem)
+    {
+        bool? deleteSurveys = await DialogService.ShowMessageBox(
+            "Warning",
+            "Deleting can not be undone!",
+            yesText: "Delete!", cancelText: "Cancel");
+
+        if (!deleteSurveys.HasValue)
+            return;
+
+        if (deleteSurveys.Value)
+        {
+            var task = Service.DeleteSurvey(contextItem);
+            await task;
+            if (task.IsCompletedSuccessfully)
+                Surveys.Remove(contextItem);
+        }
+    }
+
+    void StartedEditingItem(Survey item)
+    {
+    }
+
+    void CanceledEditingItem(Survey item)
+    {
+    }
+
+    void CommittedItemChanges(Survey item)
+    {
+        Service.UpdateSurvey(item);
+    }
+}

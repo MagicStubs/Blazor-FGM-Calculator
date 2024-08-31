@@ -1,0 +1,52 @@
+﻿@using FGM.DataLayer
+@inject ISurveyService Service
+
+<MudCard>
+    <MudForm Model="@_survey">
+        <MudCardContent>
+            <MudTextField T="string" Label="Country Name" Required="true" RequiredError="Country name is required" @bind-Value="_survey.CountryName"/>
+            <MudTextField T="string" Label="Country Code" Required="true" RequiredError="Country Code is required" @bind-Value="_survey.CountryCode"/>
+            <MudNumericField T="int" Label="Survey Year" Required="true" RequiredError="Survey year is required" @bind-Value="_survey.YearOfSurvey"/>
+            <MudTextField T="string" Label="Survey Name" Required="true" RequiredError="Survey name is required" @bind-Value="_survey.Name"/>
+            <MudNumericField T="decimal" Min="0" Max="100" Label="15-19" Required="true" RequiredError="15-19 is required" @bind-Value="_survey.FifteenToNineteen"/>
+            <MudNumericField T="decimal" Min="0" Max="100" Label="20-24" Required="true" RequiredError="20-24 name is required" @bind-Value="_survey.TwentyToTwentyfour"/>
+            <MudNumericField T="decimal" Min="0" Max="100" Label="25-29" Required="true" RequiredError="25-29 name is required" @bind-Value="_survey.TwentyfiveToTwentynine"/>
+            <MudNumericField T="decimal" Min="0" Max="100" Label="30-34" Required="true" RequiredError="30-34 name is required" @bind-Value="_survey.ThirtyToThirtyfour"/>
+            <MudNumericField T="decimal" Min="0" Max="100" Label="35-39" Required="true" RequiredError="35-39 name is required" @bind-Value="_survey.ThirtyfiveToThitrynine"/>
+            <MudNumericField T="decimal" Min="0" Max="100" Label="40-44" Required="true" RequiredError="40-44 name is required" @bind-Value="_survey.FourtyToFourtyfour"/>
+            <MudNumericField T="decimal" Min="0" Max="100" Label="45-49" Required="true" RequiredError="45-49 name is required" @bind-Value="_survey.FourtyfiveToFourtynine"/>
+        </MudCardContent>
+    </MudForm>
+    <MudStack Row="true">
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(() =>  Cancel())">Cancel</MudButton>
+        </MudCardActions>
+        <MudSpacer />
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Add</MudButton>
+        </MudCardActions>
+    </MudStack>
+</MudCard>
+
+
+@code {
+    [Parameter] public EventCallback<int> SurveysAdded { get; set; }
+
+    Survey _survey = new Survey();
+
+    private async Task Submit()
+    {
+        var numberOfChanges = await Service.AddSurvey(_survey);
+        if (numberOfChanges > 0)
+        {
+            SurveysAdded.InvokeAsync(numberOfChanges);
+            _survey = new Survey();
+        }
+    }
+
+    private void Cancel()
+    {
+        SurveysAdded.InvokeAsync(0);
+    }
+
+}

@@ -1,0 +1,34 @@
+﻿@using FGM.DataLayer
+@using FGM.DataLayer.Migrations
+@inject ISurveyService Service
+
+<MudPopoverProvider/>
+<MudSnackbarProvider/>
+<MudDialogProvider
+    Position="DialogPosition.Center"/>
+
+<div style="max-width: 1800px; margin: 0 auto">
+    <SurveyToolBar SurveysUpdated="@UpdateSuveys" Surveys="_surveys"/>
+    <SurveyTable Surveys="_surveys"/>
+</div>
+
+
+
+@code {
+    private List<Survey> _surveys = new List<Survey>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _surveys = await Service.GetSurveysAuthorized();
+        _surveys = _surveys.OrderBy(x => x.CountryName).ToList();
+    }
+
+    private async Task UpdateSuveys(int numberOfSurveysAdded)
+    {
+        if (numberOfSurveysAdded > 0)
+        {
+            _surveys = await Service.GetSurveysAuthorized();
+            _surveys = _surveys.OrderBy(x => x.CountryName).ToList();
+        }
+    }
+}

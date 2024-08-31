@@ -1,0 +1,124 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-16 mb-16">
+<MudText Typo="Typo.h2" Align="Align.Center" GutterBottom="true" Color="Color.Primary">FGM Prevention Calculator</MudText>
+<MudText Typo="Typo.h5" Align="Align.Center" Class="mb-16" Color="Color.Secondary">Data-Driven Insights for Targeted Prevention</MudText>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudPaper Class="pa-4 mb-16">
+            <MudText Typo="Typo.h5" GutterBottom="true">About Our Tool</MudText>
+            <MudText>
+                Our FGM Prevention Calculator is a powerful tool designed to help 
+                identify communities at risk. By providing data-driven
+                insights, we aim to support targeted prevention efforts and raise awareness about FGM.
+            </MudText>
+            <MudText Class="mt-4">
+                The calculations and methodology behind this tool are based on research published by Sean Callaghan.
+                For a detailed understanding of the underlying model and its implications, we encourage you to read the paper:
+            </MudText>
+            <MudLink Href="#" Typo="Typo.body1" Color="Color.Primary" Class="ml-4">
+                [Paper title to be added] by Sean Callaghan
+            </MudLink>
+            <MudText Class="mt-4">
+                In the interest of transparency and collaborative improvement, we've made our entire codebase open source.
+                You can view, review, and contribute to the project on GitHub:
+            </MudText>
+            <MudLink Href="https://github.com/MagicStubs/Blazor-FGM-Calculator" Target="_blank" Typo="Typo.body1" Color="Color.Primary" Class="ml-4">
+                View Source Code on GitHub
+            </MudLink>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="6">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Risk Assessment</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIcon Icon="@Icons.Material.Filled.Calculate" Color="Color.Primary" />
+                </CardHeaderActions>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>Calculate the percentage of populations potentially affected by FGM based on various factors.</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="6">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Trend Analysis</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Color="Color.Primary" />
+                </CardHeaderActions>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>Project future trends and set target goals for FGM reduction in specific regions.</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="6">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Resource Allocation</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIcon Icon="@Icons.Material.Filled.Shield" Color="Color.Primary" />
+                </CardHeaderActions>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>Use data to inform decision-making on where to focus prevention and support efforts.</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="6">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Community Insights</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIcon Icon="@Icons.Material.Filled.Group" Color="Color.Primary" />
+                </CardHeaderActions>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>Gain valuable insights into community demographics and social factors related to FGM risk.</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" Class="d-flex justify-center mt-8 mb-16">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Href="/Calculator" >Access Calculator</MudButton>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">How It Works</MudText>
+            <MudListItem Icon="@Icons.Material.Filled.DataUsage">
+                Select from pre-uploaded surveys in our database to use in your calculations
+            </MudListItem>
+            <MudListItem Icon="@Icons.Material.Filled.Calculate">
+                Our algorithm processes the selected data to calculate potential FGM risk percentages
+            </MudListItem>
+            <MudListItem Icon="@Icons.Material.Filled.ShowChart">
+                View and interact with your results through customizable graphs
+            </MudListItem>
+            <MudListItem Icon="@Icons.Material.Filled.TableChart">
+                Select specific data points to analyze in more detail
+            </MudListItem>
+            <MudListItem Icon="@Icons.Material.Filled.GetApp">
+                Export your results and data to CSV format for further analysis or reporting
+            </MudListItem>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+</MudContainer>

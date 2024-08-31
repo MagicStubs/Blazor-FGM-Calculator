@@ -1,0 +1,34 @@
+﻿@using System.Reflection.Metadata
+@using FGM.Data.Enums
+@using FGM.DataLayer
+
+
+<MudPaper Elevation="25" Class="mb-2">
+    <MudToolBar >
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenDataSource.InvokeAsync()"> View Data Source </MudButton>
+        <MudSpacer/>
+        <MudStack Row="true">
+            <MudNumericField T="int" @bind-Value="TargetYear" Variant="Variant.Outlined" Label="Target Year" Class="mw-4" Margin="Margin.Dense" Style="max-width: 200px"></MudNumericField>
+            <MudSelect T="YongerExtrapolationMethod" bind-Value="YongerExtrapolationMethod" Label="Extrapolation Method" Variant="Variant.Outlined" AnchorOrigin="Origin.TopCenter"
+                       Margin="Margin.Dense" Style="max-width: 200px;" Class="pr-2">
+                <MudSelectItem T="YongerExtrapolationMethod" Value="YongerExtrapolationMethod.FiveYear"/>
+                <MudSelectItem T="YongerExtrapolationMethod" Value="YongerExtrapolationMethod.TenYear"/>
+                <MudSelectItem T="YongerExtrapolationMethod" Value="YongerExtrapolationMethod.FifteenYear"/>
+            </MudSelect>
+            <MudCheckBox @bind-Value="@_extrapolateOlderAgeGroups" Label="Extrapolate Older Age Groups" Color="Color.Primary"></MudCheckBox>
+        </MudStack>
+        <MudSpacer/>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => Calcualte.InvokeAsync(TargetYear)"> Calculate </MudButton>
+    </MudToolBar>
+</MudPaper>
+
+@code {
+    private int TargetYear { get; set; }
+    [Parameter] public YongerExtrapolationMethod YongerExtrapolationMethod { get; set; }
+    [Parameter] public EventCallback<int> Calcualte { get; set; }
+    [Parameter] public EventCallback OpenDataSource { get; set; }
+    [Parameter] public OlderExtrapolationMethod OlderExtrapolationMethod { get; set; }  = 
+        _extrapolateOlderAgeGroups ? OlderExtrapolationMethod.Extrapolate : OlderExtrapolationMethod.Flatten;
+
+    private static bool _extrapolateOlderAgeGroups = false;
+}

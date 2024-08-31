@@ -1,0 +1,79 @@
+﻿@using System.Text
+@using FGM.DataLayer
+@inject ISurveyService Service
+@inject ICsvExporter<CalculatedSurvey> Exporter
+@inject IJSRuntime JSRuntime
+
+<MudDataGrid T="CalculatedSurvey" Items="@CalculatedSurveys" Filterable="true"  ReadOnly="@false" FilterMode="@DataGridFilterMode.Simple" Bordered="true"
+             Class="mb-2" MultiSelection="true" SelectedItemsChanged="@SelectedItemsChanged" >
+    <Columns>
+        <SelectColumn T="CalculatedSurvey" />
+        <PropertyColumn Property="x => x.CountryName" Title="Country"/>
+        <PropertyColumn Property="x => x.CountryCode" Title="Code"/>
+        <PropertyColumn Property="x => x.YearOfSurvey" Title="Survey Year"/>
+        <PropertyColumn Property="x => x.Name" Title="Survey Name"/>
+        <PropertyColumn Format="##0.00" Property="x => x.ZeroToFour" Title="0-4" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.FiveToNine" Title="5-9" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.TenToForteen" Title="10-14" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.FifteenToNineteen" Title="15-19" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.TwentyToTwentyfour" Title="20-24" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.TwentyfiveToTwentynine" Title="25-29" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.ThirtyToThirtyfour" Title="30-34" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.ThirtyfiveToThitrynine" Title="35-39" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.FourtyToFourtyfour" Title="40-44" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.FourtyfiveToFourtynine" Title="45-49" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.FifteyToFifteyfour" Title="50-54" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.FifityfiveToFiftynine" Title="55-59" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.SixtyToSixtyfour" Title="60-64" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.SixtyfiveToSixtynine" Title="65-69" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.SeventyToSeventyfour" Title="70-74" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.SeventyfiveToSeventynine" Title="75-79" Filterable="false"/>
+        <PropertyColumn Format="##0.00" Property="x => x.EightyPlus" Title="80+" Filterable="false"/>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="CalculatedSurvey"/>
+    </PagerContent>
+</MudDataGrid>
+
+@if (_selectedSurveys.Count > 0)
+{
+    <MudStack Row="true">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => DrawGraph.InvokeAsync(_selectedSurveys)">Graph</MudButton>
+        <MudSpacer></MudSpacer>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ExportSelectedSurveys()">Export</MudButton>
+    </MudStack>
+}
+
+@code {
+    [Parameter] public List<CalculatedSurvey> CalculatedSurveys { get; set; }
+    private List<CalculatedSurvey> _selectedSurveys = [];
+    [Parameter] public EventCallback<List<CalculatedSurvey>> DrawGraph { get; set; }
+    Func<decimal, string> _truncateToTwoDecimalPlaces = num => num.ToString("##0.00");
+    private List<string> _events = new();
+    
+    
+    void SelectedItemsChanged(HashSet<CalculatedSurvey> items)
+    {
+        _selectedSurveys = items.ToList();
+        _events.Insert(0, $"Event = SelectedItemsChanged, Data = {System.Text.Json.JsonSerializer.Serialize(items)}");
+    }
+
+    async Task ExportSelectedSurveys()
+    {
+        var csvContent = Exporter.Export(_selectedSurveys);
+        var fileName = "CalculatedSurveys.csv";
+        var fileBytes = Encoding.UTF8.GetBytes(csvContent);
+        await JSRuntime.InvokeVoidAsync("downloadFile", fileName, Convert.ToBase64String(fileBytes));
+    }
+}
+
+<script>
+    function downloadFile(fileName, base64Content) {
+        var link = document.createElement('a');
+        link.download = fileName;
+        link.href = "data:application/octet-stream;base64," + base64Content;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>

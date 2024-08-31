@@ -1,0 +1,46 @@
+﻿@using FGM.DataLayer
+@inject ISurveyService Service
+@inject ICsvDeserializerService<Survey> CsvDeserializerService
+@inject ISnackbar Snackbar
+
+<MudFileUpload T="IBrowserFile" FilesChanged="ImportSurveys" Style="margin: auto 0" Accept=".csv">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   for="@context.Id">
+            Import Survey
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+
+
+@code {
+
+    [Parameter] public EventCallback<int> SurveysImported { get; set; }
+    
+    
+    protected override Task OnInitializedAsync()
+    {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+        return base.OnInitializedAsync();
+    }
+    
+    private async Task ImportSurveys(IBrowserFile? file)
+    {
+        try
+        {
+            var surveys = await CsvDeserializerService.DeserializeCsvFileAsync(file);
+            var result = await Service.ImportSurveys(surveys);
+            await SurveysImported.InvokeAsync(result);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("A error occured processing your file! " +
+                         "\nPlease make sure your csv is in the correct format. " +
+                         "\nFor more information please checkout the help page", Severity.Error);
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+}

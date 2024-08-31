@@ -1,0 +1,84 @@
+﻿@using FGM.Data.Enums
+@using FGM.DataLayer
+@inject ISurveyService Service
+@inject IFgmCalculator Calculator
+@inject IMeanSurveyCalculator MeanCalculator
+
+<MudPopoverProvider/>
+<MudSnackbarProvider/>
+<MudDialogProvider/>
+
+
+<div style="max-width: 1800px; margin: 0 auto">
+    @if (_displayDataSource)
+    {
+        <FGMCaculatorDataSourcePicker Surveys="_surveys" SurveysSelected="SurveysSelected"></FGMCaculatorDataSourcePicker>
+    }
+    else
+    {
+        <FGMCalculatorToolBar OlderExtrapolationMethod="OlderExtrapolationMethod" YongerExtrapolationMethod="YongerExtrapolationMethod"
+                              Calcualte="(i) => Calculate(i)" OpenDataSource="() => { _displayDataSource = true; }"/>
+        @if (_loading)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7"/>
+        }
+        else
+        {
+            <FGMCalculatorTabel CalculatedSurveys="_calculatedSurveys" DrawGraph="selectedCalculatedSurveys => _selectedCalculatedSurveys = selectedCalculatedSurveys"/>
+        }
+
+
+        @if (_selectedCalculatedSurveys.Count > 0)
+        {
+            <FGMGraph Surveys="_selectedCalculatedSurveys"></FGMGraph>
+        }
+    }
+</div>
+
+@code {
+    private List<Survey> _surveys = [];
+    private List<Survey> _selectedSuveys = [];
+    private List<CalculatedSurvey> _calculatedSurveys = [];
+    private List<CalculatedSurvey> _selectedCalculatedSurveys = [];
+    private bool _loading = false;
+    private bool _displayDataSource = false;
+
+    private YongerExtrapolationMethod YongerExtrapolationMethod { get; set; }
+    private OlderExtrapolationMethod OlderExtrapolationMethod { get; set; }
+
+    protected override async void OnInitialized()
+    {
+        _surveys = await Service.GetSurveys();
+        _surveys = _surveys.OrderBy(x => x.CountryName).ToList();
+        _selectedSuveys = _surveys;
+    }
+
+    private void Calculate(int targetYear)
+    {
+        _loading = true;
+        _calculatedSurveys = new List<CalculatedSurvey>();
+        foreach (var survey in _selectedSuveys)
+        {
+            _calculatedSurveys.Add(Calculator.RunFgmCalculation(survey, targetYear, YongerExtrapolationMethod, OlderExtrapolationMethod));
+        }
+
+        var meanGroups = _calculatedSurveys.GroupBy(x => x.CountryName).ToList();
+        _calculatedSurveys = new List<CalculatedSurvey>();
+        foreach (var calculatedSurveyMeanGroup in meanGroups)
+        {
+            _calculatedSurveys.Add(MeanCalculator.CalculateMeanSurvey(calculatedSurveyMeanGroup.ToList()));
+        }
+
+        _loading = false;
+    }
+
+    private void SurveysSelected(List<Survey> surveys)
+    {
+        _selectedSuveys = surveys;
+        _displayDataSource = false;
+        _selectedCalculatedSurveys.Clear();
+        _calculatedSurveys.Clear();
+    }
+
+
+}

@@ -1,0 +1,35 @@
+﻿@using FGM.DataLayer
+@inject IDialogService DialogService
+@inject ISurveyService Service
+
+<MudPopover Open="@openForm" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter" Class="mt-2">
+    <div style="min-width: 400px">
+        <AddSurveyForm SurveysAdded="@AddSurvey"></AddSurveyForm>
+    </div>
+</MudPopover>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnButtonClicked">Add Survey</MudButton>
+
+@code
+{
+    private bool openForm { get; set; }
+    
+    [Parameter] public EventCallback<int> SurveyAdded { get; set; }
+    
+    private async void OnButtonClicked()
+    {
+        openForm = true;
+    }
+    
+    private async Task AddSurvey(int changes)
+    {
+        openForm = false;
+        await UpdateSuveys(changes);
+    }
+
+    private async Task UpdateSuveys(int changes)
+    {
+        if (changes > 0)
+            await SurveyAdded.InvokeAsync(changes);
+    }
+}

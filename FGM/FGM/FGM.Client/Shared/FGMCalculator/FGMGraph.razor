@@ -1,0 +1,44 @@
+﻿@using FGM.DataLayer
+
+<MudChart ChartType="ChartType.Line" ChartSeries="SetUpGraph()"
+          XAxisLabels="@_xAxisLabels" Width="100%" Height="600" ChartOptions="_options">
+
+</MudChart>
+
+@code {
+    [Parameter] public List<CalculatedSurvey> Surveys { set; get; } = [];
+    private ChartOptions _options = new ChartOptions();
+    
+    protected override void OnInitialized()
+    {
+        _options.InterpolationOption = InterpolationOption.Straight;
+    }
+    
+    Func<CalculatedSurvey, ChartSeries> ToChartSurvey = survey => new ChartSeries()
+    {
+        Name = survey.CountryName,
+        Data = survey.GraphData,
+    };
+
+    List<ChartSeries> SetUpGraph()
+    {
+        var data = new List<ChartSeries>();
+        data.AddRange(Surveys.Select(x => ToChartSurvey(x)).ToList());
+
+        data.Add(new ChartSeries()
+        {
+            IsVisible = false,
+            Data = new double[] { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100 }
+        });
+
+        data.Add(new ChartSeries()
+        {
+            IsVisible = false,
+            Data = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        });
+
+        return data;
+    }
+
+    private readonly string[] _xAxisLabels = ["80+", "75-79", "70-74", "65-69", "60-64", "55-59", "50-54", "45-49", "40-44", "35-39", "30-34", "25-29", "20-24", "15-19", "10-14", "5-9", "0-4"];
+}

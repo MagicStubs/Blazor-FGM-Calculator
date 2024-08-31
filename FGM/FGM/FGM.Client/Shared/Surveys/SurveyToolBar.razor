@@ -1,0 +1,19 @@
+﻿@using FGM.DataLayer
+
+
+<MudPaper Elevation="25" Class="mb-2">
+    <MudToolBar >
+        <SurveyImport SurveysImported="i => SurveysUpdated.InvokeAsync(i)"/>
+        <MudSpacer/>
+        <div style="margin-right: 10px">
+            <AddSurveyButton SurveyAdded="i => SurveysUpdated.InvokeAsync(i)"/>
+        </div>
+        <BatchDeleteSurveys Surveys="Surveys" SurveysDeleted="i => SurveysUpdated.InvokeAsync(i)"/>
+    </MudToolBar>
+</MudPaper>
+
+@code {
+    [Parameter] public EventCallback<int> SurveysUpdated { get; set; }
+    
+    [Parameter] public List<Survey> Surveys { get; set; } = new List<Survey>();
+}

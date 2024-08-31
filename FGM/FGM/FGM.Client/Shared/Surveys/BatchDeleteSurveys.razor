@@ -1,0 +1,30 @@
+﻿@using CsvHelper.Delegates
+@using FGM.DataLayer
+@inject IDialogService DialogService
+@inject ISurveyService Service
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnButtonClicked">Delete All Surveys</MudButton>
+
+@code
+{
+    [Parameter] public List<Survey> Surveys { get; set; }
+    
+    [Parameter] public EventCallback<int> SurveysDeleted { get; set; }
+
+    private async void OnButtonClicked()
+    {
+        bool? deleteSurveys = await DialogService.ShowMessageBox(
+            "Warning",
+            "Deleting can not be undone!",
+            yesText: "Delete!", cancelText: "Cancel");
+
+        if (!deleteSurveys.HasValue)
+            return;
+
+        if (deleteSurveys.Value)
+        {
+            var result = await Service.DeleteSurveys(Surveys);
+            SurveysDeleted.InvokeAsync(result);
+        }
+    }
+}

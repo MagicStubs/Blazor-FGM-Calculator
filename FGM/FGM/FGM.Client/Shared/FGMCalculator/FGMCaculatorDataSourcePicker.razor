@@ -1,0 +1,47 @@
+﻿@using FGM.Data.Enums
+@using FGM.DataLayer
+@inject ISurveyService Service
+@inject IFgmCalculator Calculator
+@inject IMeanSurveyCalculator MeanCalculator
+<div style="margin: 0 auto">
+    <MudDataGrid T="Survey" Items="@Surveys" Filterable="true"  ReadOnly="true" FilterMode="@DataGridFilterMode.Simple" Bordered="false"
+                 Class="mb-2"  MultiSelection="true" SelectedItemsChanged="@SelectedItemsChanged" RowsPerPage="10"  >
+        <Columns>
+            <SelectColumn T="Survey" />
+            <PropertyColumn Property="x => x.CountryName" Title="Country"/>
+            <PropertyColumn Property="x => x.CountryCode" Title="Code"/>
+            <PropertyColumn Property="x => x.YearOfSurvey" Title="Survey Year"/>
+            <PropertyColumn Property="x => x.Name" Title="Survey Name"/>
+            <PropertyColumn Property="x => x.FifteenToNineteen" Title="15-19" Filterable="false"/>
+            <PropertyColumn Property="x => x.TwentyToTwentyfour" Title="20-24" Filterable="false"/>
+            <PropertyColumn Property="x => x.TwentyfiveToTwentynine" Title="25-29" Filterable="false"/>
+            <PropertyColumn Property="x => x.ThirtyToThirtyfour" Title="30-34" Filterable="false"/>
+            <PropertyColumn Property="x => x.ThirtyfiveToThitrynine" Title="35-39" Filterable="false"/>
+            <PropertyColumn Property="x => x.FourtyToFourtyfour" Title="40-44" Filterable="false"/>
+            <PropertyColumn Property="x => x.FourtyfiveToFourtynine" Title="45-49" Filterable="false"/>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Survey"/>
+        </PagerContent>
+    </MudDataGrid>
+    
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Callback"> Save Selection </MudButton>
+</div>
+
+@code {
+    [Parameter] public List<Survey> Surveys { get; set; } = [];
+    [Parameter] public EventCallback<List<Survey>> SurveysSelected { get; set; }
+    
+    private List<Survey> SelectedSurveys { get; set; } = [];
+    
+    void SelectedItemsChanged(HashSet<Survey> items)
+    {
+        SelectedSurveys = items.ToList();
+    }
+
+    private void Callback()
+    {
+        SurveysSelected.InvokeAsync(SelectedSurveys);
+    }
+
+}

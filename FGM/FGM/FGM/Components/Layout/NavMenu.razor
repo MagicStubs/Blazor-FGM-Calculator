@@ -1,0 +1,20 @@
+﻿<MudNavMenu>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    <MudNavLink Href="Calculator" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Calculate">Calculator</MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="surveys" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Manage Surveys</MudNavLink>
+            <MudNavLink Href="surveyhelp" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.HelpOutline">Survey CSV Format</MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="Account/Manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">@context.User.Identity?.Name</MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="Account/Login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Login</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
+
+</MudNavMenu>
